@@ -1,0 +1,9 @@
+.idea
+.DS_Store
+application/*
+source/*
+logs/*
+ssl/*
+docker-compose.yml
+docker-compose.yml.*
+.env

@@ -1,0 +1,78 @@
+version: "3"
+services:
+  nginx:
+    build:
+      context: ./services/nginx
+      args:
+        NGINX_VERSION: ${NGINX_VERSION}
+
+    container_name: nginx
+    ports:
+      - "${NGINX_HTTP_HOST_PORT}:80"
+      - "${NGINX_HTTPS_HOST_PORT}:443"
+    volumes:
+      - ${NGINX_SSL_CERTIFICATE_DIR}:/ssl:rw
+      - ${NGINX_CONFD_DIR}:/etc/nginx/conf.d/:rw
+      - ${NGINX_CONF_FILE}:/etc/nginx/nginx.conf:ro
+      - ${NGINX_LOG_DIR}:/var/log/nginx/:rw
+    restart: always
+    networks:
+      - default
+
+  rust:
+    build:
+      context: ./services/rust
+      args:
+        ALPINE_VERSION: ${ALPINE_VERSION}
+        RUST_APP_NAME: ${RUST_APP_NAME}
+        RUST_APP_PORT: ${RUST_APP_PORT}
+    container_name: rust
+    volumes: 
+      - ${RUST_SOURCE_DIR}:/app/:ro
+    networks:
+      - default
+
+  postgresql:
+    image: postgres:${POSTGRESQL_VERSION}
+    container_name: postgresql 
+    environment:
+      POSTGRES_USER: ${POSTGRESQL_USERNAME}
+      POSTGRES_PASSWORD: ${POSTGRESQL_PASSWORD}
+      POSTGRES_DB: ${POSTGRESQL_DATABASE}
+    ports:
+      - "${POSTGRESQL_HOST_PORT}:5432"
+    volumes:
+      - ${DATABASE_DIR}/postgresql/db-files:/var/lib/postgresql/data/:rw
+    restart: always
+    networks:
+      - default
+
+  # mysql:
+  #   image: mysql:${MYSQL_VERSION}
+  #   container_name: mysql
+  #   ports:
+  #     - "${MYSQL_HOST_PORT}:3306"
+  #   volumes:
+  #     - ${MYSQL_CONF_FILE}:/etc/mysql/conf.d/mysql.cnf:ro
+  #     - ${DATABASE_DIR}/mysql:/var/lib/mysql/:rw
+  #   restart: always
+  #   networks:
+  #     - default
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+  #     TZ: "${TIME_ZONE}"
+
+#  mysql5:
+#    image: mysql:${MYSQL5_VERSION}
+#    container_name: mysql5
+#    ports:
+#      - "${MYSQL5_HOST_PORT}:3306"
+#    volumes:
+#      - ${MYSQL5_CONF_FILE}:/etc/mysql/conf.d/mysql.cnf:ro
+#      - ${DATABASE_DIR}/mysql5:/var/lib/mysql/:rw
+#    restart: always
+#    networks:
+#      - default
+#    environment:
+#      MYSQL_ROOT_PASSWORD: "${MYSQL5_ROOT_PASSWORD}"
+#      TZ: "${TIME_ZONE}"
