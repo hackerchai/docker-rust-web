@@ -24,8 +24,10 @@ services:
       context: ./services/rust
       args:
         ALPINE_VERSION: ${ALPINE_VERSION}
+        ALPINE_MIRROR_URL: ${ALPINE_MIRROR_URL}
         RUST_APP_NAME: ${RUST_APP_NAME}
         RUST_APP_PORT: ${RUST_APP_PORT}
+        DATABASE_TYPE: ${DATABASE_TYPE}
     container_name: rust
     volumes: 
       - ${RUST_SOURCE_DIR}:/app/:ro
@@ -47,20 +49,20 @@ services:
     networks:
       - default
 
-  # mysql:
-  #   image: mysql:${MYSQL_VERSION}
-  #   container_name: mysql
-  #   ports:
-  #     - "${MYSQL_HOST_PORT}:3306"
-  #   volumes:
-  #     - ${MYSQL_CONF_FILE}:/etc/mysql/conf.d/mysql.cnf:ro
-  #     - ${DATABASE_DIR}/mysql:/var/lib/mysql/:rw
-  #   restart: always
-  #   networks:
-  #     - default
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
-  #     TZ: "${TIME_ZONE}"
+# mysql:
+#   image: mysql:${MYSQL_VERSION}
+#   container_name: mysql
+#   ports:
+#     - "${MYSQL_HOST_PORT}:3306"
+#   volumes:
+#     - ${MYSQL_CONF_FILE}:/etc/mysql/conf.d/mysql.cnf:ro
+#     - ${DATABASE_DIR}/mysql:/var/lib/mysql/:rw
+#   restart: always
+#   networks:
+#     - default
+#   environment:
+#     MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+#     TZ: "${TIME_ZONE}"
 
 #  mysql5:
 #    image: mysql:${MYSQL5_VERSION}
